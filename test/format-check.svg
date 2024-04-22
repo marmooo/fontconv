@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!--
+ 
+ 
+ 
+ 
+  -->
+
+  <defs>
+    <font name="Material Icons Regular"
+      horiz-adv-x="512" vert-adv-y="512" >
+    <font-face font-family="Material Icons" font-weight="400"
+      font-stretch="normal"
+      units-per-em="512"
+      ascent="512"
+      descent="0"/>
+<glyph glyph-name=".notdef" unicode="&#59530;"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M213 213L213 85L107 85L107 256L43 256L256 448L469 256L405 256L405 85L299 85L299 213L213 213Z"/>
+<missing-glyph glyph-name=".notdef"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M213 213L213 85L107 85L107 256L43 256L256 448L469 256L405 256L405 85L299 85L299 213L213 213Z"/>
+    </font>
+  </defs>
+</svg>
