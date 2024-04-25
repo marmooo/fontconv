@@ -63,7 +63,7 @@ export function otf2ttf(otf) {
 //   return new Uint8Array(ttfBuffer);
 // }
 
-function getGlyphString(options) {
+function getGlyphString(options = {}) {
   if (options.textFile) {
     const text = Deno.readTextFileSync(options.textFile);
     return text.trimEnd().replace(/\n/g, "");
@@ -120,7 +120,7 @@ async function convertFormat(font, format) {
   }
 }
 
-export function filterGlyphs(font, options) {
+export function filterGlyphs(font, options = {}) {
   const glyphString = getGlyphString(options);
   if (glyphString) {
     return font.stringToGlyphs(glyphString);
@@ -143,7 +143,7 @@ function createTemporaryFont(font, glyphs) {
   return tempFont;
 }
 
-export async function convert(fontContent, format, options) {
+export async function convert(fontContent, format, options = {}) {
   const font = await getFont(fontContent);
   const glyphs = filterGlyphs(font, options);
   const tempFont = createTemporaryFont(font, glyphs);
