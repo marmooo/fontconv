@@ -7,7 +7,7 @@ Convert and compress fonts (.ttf, .otf, .eot, .svg, .woff, .woff2).
 ### Deno
 
 ```
-deno install -fr --allow-read --allow-write --name fontconv \
+deno install -fr --allow-read --allow-write --name fontconv -g \
 https://raw.githubusercontent.com/marmooo/fontconv/main/cli.js
 ```
 
