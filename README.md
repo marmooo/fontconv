@@ -45,6 +45,7 @@ Options:
   --text-file <path>  Path of line separated character file to compress
   --code <string>     comma separated codepoints to compress
   --code-file <path>  Path of line separated codepoint file to compress
+  --remove-ligatures  remove ligatures associated with the glyphs
   -h, --help          display help for command
 ```
 

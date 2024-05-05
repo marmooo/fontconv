@@ -1,11 +1,14 @@
+import { getLigatureMap } from "./ligature.js";
 import { compress, decompress } from "npm:wawoff2@2.0.1";
 import { Font, parse } from "npm:opentype.js@1.3.4";
-import { font2svgFont, ttf2svgFont } from "npm:@marmooo/ttf2svg@0.1.8";
+import { font2svgFont, ttf2svgFont } from "../ttf2svg/mod.js";
 import svg2ttf from "npm:svg2ttf@6.0.3";
 import ttf2eot from "npm:ttf2eot@3.1.0";
 import ttf2woff from "npm:ttf2woff@3.0.0";
 // import ttf2woff2 from "npm:ttf2woff2@5.0.0";
 // import * as fonteditor from "npm:fonteditor-core@2.3.3"; // glyph names are lost
+
+export { getLigatureMap };
 
 export function isOTF(uint8Array) {
   return uint8Array[0] === 0x4F &&
@@ -63,7 +66,7 @@ export function otf2ttf(otf) {
 //   return new Uint8Array(ttfBuffer);
 // }
 
-function getGlyphString(options = {}) {
+function getGlyphString(options) {
   if (options.textFile) {
     const text = Deno.readTextFileSync(options.textFile);
     return text.trimEnd().replace(/\n/g, "");
@@ -120,7 +123,7 @@ async function convertFormat(font, format) {
   }
 }
 
-export function filterGlyphs(font, options = {}) {
+export function filterGlyphs(font, options) {
   const glyphString = getGlyphString(options);
   if (glyphString) {
     return font.stringToGlyphs(glyphString);
@@ -131,7 +134,17 @@ export function filterGlyphs(font, options = {}) {
 
 function createTemporaryFont(font, glyphs) {
   const notdefGlyph = font.glyphs.get(0);
-  const tempFont = new Font({
+  notdefGlyph.name = ".notdef";
+
+  // avoid the warning caused by opentype.js below
+  // Undefined CHARARRAY encountered and treated as an empty string.
+  glyphs.forEach((glyph) => {
+    if (!glyph.name) {
+      glyph.name = String.fromCharCode(glyph.unicode);
+    }
+  });
+
+  const tmpFont = new Font({
     familyName: font.names.fontFamily.en,
     styleName: font.names.fontSubfamily.en,
     unitsPerEm: font.unitsPerEm,
@@ -139,13 +152,67 @@ function createTemporaryFont(font, glyphs) {
     descender: font.descender,
     glyphs: [notdefGlyph, ...glyphs],
   });
-  tempFont.names = font.names;
-  return tempFont;
+  tmpFont.names = font.names;
+  return tmpFont;
 }
 
-export async function convert(fontContent, format, options = {}) {
+function createLigaturesFont(font, glyphs) {
+  const ligatures = getLigatureMap(font);
+  const charSet = new Set();
+  for (const glyph of glyphs) {
+    const ligature = ligatures[glyph.index];
+    if (ligature) {
+      Array.from(ligature.name).forEach((char) => {
+        charSet.add(char);
+      });
+    }
+  }
+  glyphs.forEach((glyph) => {
+    const char = String.fromCharCode(glyph.unicode);
+    if (charSet.has(char)) charSet.delete(char);
+  });
+
+  const ligatureGlyphs = [];
+  charSet.forEach((char) => {
+    const unicode = char.codePointAt(0);
+    const glyphIndex = font.encoding.cmap.glyphIndexMap[unicode];
+    const glyph = font.glyphs.get(glyphIndex);
+    ligatureGlyphs.push(glyph);
+  });
+  const newGlyphs = [...ligatureGlyphs, ...glyphs];
+  const tmpFont = createTemporaryFont(font, newGlyphs);
+
+  const charMap = {};
+  newGlyphs.forEach((glyph, index) => {
+    const char = String.fromCharCode(glyph.unicode);
+    charMap[char] = index + 1;
+  });
+  glyphs.forEach((glyph, i) => {
+    const ligature = ligatures[glyph.index];
+    if (ligature) {
+      const sub = Array.from(ligature.name)
+        .map((char) => charMap[char]);
+      const by = ligatureGlyphs.length + i + 1;
+      tmpFont.substitution.addLigature("liga", { sub, by });
+    }
+  });
+
+  const otf = tmpFont.toArrayBuffer();
+  const newFont = parse(otf);
+  return newFont;
+}
+
+function createFont(font, glyphs, options) {
+  if (options.removeLigatures) {
+    return createTemporaryFont(font, glyphs);
+  } else {
+    return createLigaturesFont(font, glyphs);
+  }
+}
+
+export async function convert(fontContent, format, options) {
   const font = await getFont(fontContent);
   const glyphs = filterGlyphs(font, options);
-  const tempFont = createTemporaryFont(font, glyphs);
+  const tempFont = createFont(font, glyphs, options);
   return await convertFormat(tempFont, format);
 }

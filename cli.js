@@ -21,6 +21,10 @@ program
   .option(
     "--code-file <path>",
     "Path of line separated codepoint file to compress",
+  )
+  .option(
+    "--remove-ligatures",
+    "remove ligatures associated with the glyphs",
   );
 program.parse();
 

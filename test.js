@@ -105,3 +105,25 @@ Deno.test("Name check", async () => {
   assertEquals(await getName(woff, code), name);
   assertEquals(await getName(woff2, code), name);
 });
+Deno.test("Ligature check", async () => {
+  const file = Deno.readFileSync("test/material-icons.woff2");
+  const options1 = { code: "0xe88a" };
+  const ttf1 = await fontconv.convert(file, ".ttf", options1);
+  const font1 = await fontconv.getFont(ttf1);
+  const ligatures1 = fontconv.getLigatureMap(font1);
+  const values1 = Object.values(ligatures1);
+  assertEquals(values1.length, 1);
+  assertEquals(values1[0].name, "home");
+
+  const options2 = { code: "0xe88a", removeLigatures: true };
+  const ttf2 = await fontconv.convert(file, ".ttf", options2);
+  const font2 = await fontconv.getFont(ttf2);
+  const ligatures2 = fontconv.getLigatureMap(font2);
+  const values2 = Object.values(ligatures2);
+  assertEquals(values2.length, 0);
+
+  const char = String.fromCodePoint(Number(options1.code));
+  const path1 = font1.charToGlyph(char).path.toPathData();
+  const path2 = font2.charToGlyph(char).path.toPathData();
+  assertEquals(path1, path2);
+});
