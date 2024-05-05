@@ -1,4 +1,5 @@
 function* parseCoverageFormat1(subtable, reverseGlyphIndexMap) {
+  if (!subtable.ligatureSets) return;
   for (let i = 0; i < subtable.ligatureSets.length; i++) {
     for (const ligature of subtable.ligatureSets[i]) {
       const initialIndex = subtable.coverage.glyphs[i];
@@ -15,6 +16,7 @@ function* parseCoverageFormat1(subtable, reverseGlyphIndexMap) {
 }
 
 function* parseCoverageFormat2(subtable, reverseGlyphIndexMap) {
+  if (!subtable.ligatureSets) return;
   const coverage2 = [];
   subtable.coverage.ranges.forEach((coverage) => {
     for (let c = coverage.start; c <= coverage.end; c++) {
@@ -38,16 +40,19 @@ function* parseCoverageFormat2(subtable, reverseGlyphIndexMap) {
 // https://github.com/opentypejs/opentype.js/issues/384
 // https://jsfiddle.net/nvbajtmo/
 export function* parseLigatures(font) {
-  if (!font.tables.gsub?.lookups) return;
+  const gsub = font.tables.gsub;
+  if (!gsub) return;
   const glyphIndexMap = font.tables.cmap.glyphIndexMap;
   const reverseGlyphIndexMap = {};
   Object.keys(glyphIndexMap).forEach((codePoint) => {
     const value = glyphIndexMap[codePoint];
     reverseGlyphIndexMap[value] = codePoint;
   });
-  for (const lookup of font.tables.gsub.lookups) {
+  for (const lookup of gsub.lookups) {
     for (const subtable of lookup.subtables) {
-      if (subtable.coverage.format === 1) {
+      const coverage = subtable.coverage;
+      if (!coverage) continue;
+      if (coverage.format === 1) {
         yield* parseCoverageFormat1(subtable, reverseGlyphIndexMap);
       } else {
         yield* parseCoverageFormat2(subtable, reverseGlyphIndexMap);
