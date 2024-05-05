@@ -1,7 +1,7 @@
 import { getLigatureMap } from "./ligature.js";
 import { compress, decompress } from "npm:wawoff2@2.0.1";
 import { Font, parse } from "npm:opentype.js@1.3.4";
-import { font2svgFont, ttf2svgFont } from "npm:@marmooo/ttf2svg@0.2.0";
+import { font2svgFont, ttf2svgFont } from "npm:@marmooo/ttf2svg@0.2.1";
 import svg2ttf from "npm:svg2ttf@6.0.3";
 import ttf2eot from "npm:ttf2eot@3.1.0";
 import ttf2woff from "npm:ttf2woff@3.0.0";
