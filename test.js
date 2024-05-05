@@ -8,6 +8,13 @@ async function getName(uint8Array, code) {
   return glyph.name;
 }
 
+async function getLigature(uint8Array, code) {
+  const font = await fontconv.getFont(uint8Array);
+  const glyphIndex = font.encoding.cmap.glyphIndexMap[Number(code)];
+  const ligatureMap = fontconv.getLigatureMap(font, "by");
+  return ligatureMap[glyphIndex].name;
+}
+
 Deno.test("Format check", () => {
   const otf = Deno.readFileSync("test/format-check.otf");
   const ttf = Deno.readFileSync("test/format-check.ttf");
@@ -89,17 +96,24 @@ Deno.test("Output check", async () => {
   assertEquals(fontconv.isWOFF(woff), true);
   assertEquals(fontconv.isWOFF2(woff2), true);
 });
-Deno.test("Options check", async () => {
-  const font = Deno.readFileSync("test/bootstrap-icons.woff2");
+Deno.test("Options check1", async () => {
+  const font1 = Deno.readFileSync("test/bootstrap-icons.woff2");
   const name = "alarm";
   const code = "0xf102";
   const text = String.fromCharCode(code);
-  const ttf1 = await fontconv.convert(font, ".ttf", { code });
+  const ttf1 = await fontconv.convert(font1, ".ttf", { code });
   assertEquals(await getName(ttf1, code), name);
-  const ttf2 = await fontconv.convert(font, ".ttf", { text });
+  const ttf2 = await fontconv.convert(font1, ".ttf", { text });
   assertEquals(await getName(ttf2, code), name);
-  const ttf3 = await fontconv.convert(font, ".ttf", { name });
+  const ttf3 = await fontconv.convert(font1, ".ttf", { name });
   assertEquals(await getName(ttf3, code), name);
+});
+Deno.test("Options check2", async () => {
+  const font = Deno.readFileSync("test/material-icons.woff2");
+  const ligature = "home";
+  const code = "0xe88a";
+  const ttf = await fontconv.convert(font, ".ttf", { ligature });
+  assertEquals(await getLigature(ttf, code), ligature);
 });
 Deno.test("Name check", async () => {
   const font = Deno.readFileSync("test/bootstrap-icons.woff2");
@@ -122,7 +136,7 @@ Deno.test("Ligature check", async () => {
   const options1 = { code: "0xe88a" };
   const ttf1 = await fontconv.convert(file, ".ttf", options1);
   const font1 = await fontconv.getFont(ttf1);
-  const ligatures1 = fontconv.getLigatureMap(font1);
+  const ligatures1 = fontconv.getLigatureMap(font1, "by");
   const values1 = Object.values(ligatures1);
   assertEquals(values1.length, 1);
   assertEquals(values1[0].name, "home");
@@ -130,7 +144,7 @@ Deno.test("Ligature check", async () => {
   const options2 = { code: "0xe88a", removeLigatures: true };
   const ttf2 = await fontconv.convert(file, ".ttf", options2);
   const font2 = await fontconv.getFont(ttf2);
-  const ligatures2 = fontconv.getLigatureMap(font2);
+  const ligatures2 = fontconv.getLigatureMap(font2, "by");
   const values2 = Object.values(ligatures2);
   assertEquals(values2.length, 0);
 

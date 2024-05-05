@@ -56,10 +56,10 @@ export function* parseLigatures(font) {
   }
 }
 
-export function getLigatureMap(font) {
+export function getLigatureMap(font, key) {
   const map = {};
   for (const ligature of parseLigatures(font)) {
-    map[ligature.by] = ligature;
+    map[ligature[key]] = ligature;
   }
   return map;
 }

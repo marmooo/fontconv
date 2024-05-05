@@ -27,6 +27,11 @@ program
     "--name-file <path>",
     "Path of line separated glyph name file to compress",
   )
+  .option("--ligature <string>", "comma separated ligatures to compress")
+  .option(
+    "--ligature-file <path>",
+    "Path of line separated ligature file to compress",
+  )
   .option(
     "--remove-ligatures",
     "remove ligatures associated with the glyphs",

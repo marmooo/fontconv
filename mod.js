@@ -128,6 +128,11 @@ export function filterGlyphs(font, options) {
     const text = Deno.readTextFileSync(options.nameFile);
     return text.trimEnd().split("\n")
       .map((line) => font.glyphs.get(nameMap[line]));
+  } else if (options.ligatureFile) {
+    const ligatureMap = getLigatureMap(font, "name");
+    const text = Deno.readTextFileSync(options.ligatureFile);
+    return text.trimEnd().split("\n")
+      .map((line) => font.glyphs.get(ligatureMap[line].by));
   } else if (options.text) {
     return font.stringToGlyphs(options.text);
   } else if (options.code) {
@@ -138,6 +143,10 @@ export function filterGlyphs(font, options) {
     const nameMap = getNameMap(font);
     return options.name.split(",")
       .map((line) => font.glyphs.get(nameMap[line]));
+  } else if (options.ligature) {
+    const ligatureMap = getLigatureMap(font, "name");
+    return options.ligature.split(",")
+      .map((line) => font.glyphs.get(ligatureMap[line].by));
   } else {
     return Object.values(font.glyphs.glyphs);
   }
@@ -168,10 +177,10 @@ function createTemporaryFont(font, glyphs) {
 }
 
 function createLigaturesFont(font, glyphs) {
-  const ligatures = getLigatureMap(font);
+  const ligatureMap = getLigatureMap(font, "by");
   const charSet = new Set();
   for (const glyph of glyphs) {
-    const ligature = ligatures[glyph.index];
+    const ligature = ligatureMap[glyph.index];
     if (ligature) {
       Array.from(ligature.name).forEach((char) => {
         charSet.add(char);
@@ -199,7 +208,7 @@ function createLigaturesFont(font, glyphs) {
     charMap[char] = index + 1;
   });
   glyphs.forEach((glyph, i) => {
-    const ligature = ligatures[glyph.index];
+    const ligature = ligatureMap[glyph.index];
     if (ligature) {
       const sub = Array.from(ligature.name)
         .map((char) => charMap[char]);

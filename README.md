@@ -36,19 +36,21 @@ Usage: fontconv [options] <input> <output>
 Convert and compress fonts (.ttf, .otf, .eot, .svg, .woff, .woff2).
 
 Arguments:
-  input               Path of input font file
-  output              Path of output font file
+  input                   Path of input font file
+  output                  Path of output font file
 
 Options:
-  -V, --version       output the version number
-  --text <string>     characters to compress
-  --text-file <path>  Path of line separated character file to compress
-  --code <string>     comma separated codepoints to compress
-  --code-file <path>  Path of line separated codepoint file to compress
-  --name <string>     comma separated glyph names to compress
-  --name-file <path>  Path of line separated glyph name file to compress
-  --remove-ligatures  remove ligatures associated with the glyphs
-  -h, --help          display help for command
+  -V, --version           output the version number
+  --text <string>         characters to compress
+  --text-file <path>      Path of line separated character file to compress
+  --code <string>         comma separated codepoints to compress
+  --code-file <path>      Path of line separated codepoint file to compress
+  --name <string>         comma separated glyph names to compress
+  --name-file <path>      Path of line separated glyph name file to compress
+  --ligature <string>     comma separated ligatures to compress
+  --ligature-file <path>  Path of line separated ligature file to compress
+  --remove-ligatures      remove ligatures associated with the glyphs
+  -h, --help              display help for command
 ```
 
 ### Examples
