@@ -66,24 +66,6 @@ export function otf2ttf(otf) {
 //   return new Uint8Array(ttfBuffer);
 // }
 
-function getGlyphString(options) {
-  if (options.textFile) {
-    const text = Deno.readTextFileSync(options.textFile);
-    return text.trimEnd().replace(/\n/g, "");
-  } else if (options.codeFile) {
-    const text = Deno.readTextFileSync(options.codeFile);
-    return text.trimEnd().split("\n")
-      .map((line) => String.fromCodePoint(Number(line))).join("");
-  } else if (options.text) {
-    return options.text;
-  } else if (options.code) {
-    return options.code.split(",")
-      .map((code) => String.fromCodePoint(Number(code))).join("");
-  } else {
-    return undefined;
-  }
-}
-
 export async function getFont(fontContent) {
   if (isSVG(fontContent)) {
     const ttf = svg2ttf(fontContent);
@@ -123,10 +105,39 @@ async function convertFormat(font, format) {
   }
 }
 
+export function getNameMap(font) {
+  const map = {};
+  for (const glyph of Object.values(font.glyphs.glyphs)) {
+    map[glyph.name] = glyph.index;
+  }
+  return map;
+}
+
 export function filterGlyphs(font, options) {
-  const glyphString = getGlyphString(options);
-  if (glyphString) {
+  if (options.textFile) {
+    const text = Deno.readTextFileSync(options.textFile);
+    const glyphString = text.trimEnd().replace(/\n/g, "");
     return font.stringToGlyphs(glyphString);
+  } else if (options.codeFile) {
+    const text = Deno.readTextFileSync(options.codeFile);
+    const glyphString = text.trimEnd().split("\n")
+      .map((line) => String.fromCodePoint(Number(line))).join("");
+    return font.stringToGlyphs(glyphString);
+  } else if (options.nameFile) {
+    const nameMap = getNameMap(font);
+    const text = Deno.readTextFileSync(options.nameFile);
+    return text.trimEnd().split("\n")
+      .map((line) => font.glyphs.get(nameMap[line]));
+  } else if (options.text) {
+    return font.stringToGlyphs(options.text);
+  } else if (options.code) {
+    const glyphString = options.code.split(",")
+      .map((code) => String.fromCodePoint(Number(code))).join("");
+    return font.stringToGlyphs(glyphString);
+  } else if (options.name) {
+    const nameMap = getNameMap(font);
+    return options.name.split(",")
+      .map((line) => font.glyphs.get(nameMap[line]));
   } else {
     return Object.values(font.glyphs.glyphs);
   }

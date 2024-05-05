@@ -22,6 +22,11 @@ program
     "--code-file <path>",
     "Path of line separated codepoint file to compress",
   )
+  .option("--name <string>", "comma separated glyph names to compress")
+  .option(
+    "--name-file <path>",
+    "Path of line separated glyph name file to compress",
+  )
   .option(
     "--remove-ligatures",
     "remove ligatures associated with the glyphs",

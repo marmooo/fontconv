@@ -3,7 +3,7 @@ import { assertEquals } from "https://deno.land/std/assert/mod.ts";
 
 async function getName(uint8Array, code) {
   const font = await fontconv.getFont(uint8Array);
-  const glyphIndex = font.encoding.cmap.glyphIndexMap[code.toString()];
+  const glyphIndex = font.encoding.cmap.glyphIndexMap[Number(code)];
   const glyph = font.glyphs.get(glyphIndex.toString());
   return glyph.name;
 }
@@ -88,6 +88,18 @@ Deno.test("Output check", async () => {
   assertEquals(fontconv.isSVG(svg), true);
   assertEquals(fontconv.isWOFF(woff), true);
   assertEquals(fontconv.isWOFF2(woff2), true);
+});
+Deno.test("Options check", async () => {
+  const font = Deno.readFileSync("test/bootstrap-icons.woff2");
+  const name = "alarm";
+  const code = "0xf102";
+  const text = String.fromCharCode(code);
+  const ttf1 = await fontconv.convert(font, ".ttf", { code });
+  assertEquals(await getName(ttf1, code), name);
+  const ttf2 = await fontconv.convert(font, ".ttf", { text });
+  assertEquals(await getName(ttf2, code), name);
+  const ttf3 = await fontconv.convert(font, ".ttf", { name });
+  assertEquals(await getName(ttf3, code), name);
 });
 Deno.test("Name check", async () => {
   const font = Deno.readFileSync("test/bootstrap-icons.woff2");
