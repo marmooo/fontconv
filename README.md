@@ -62,7 +62,7 @@ fontconv --text abcdef in.ttf out.woff2
 fontconv --text-file charaters.lst in.ttf out.woff2
 fontconv --code 0x61,98 in.ttf out.woff2
 fontconv --code-file codepoints.lst in.ttf out.woff2
-fontconv --name alarm.box in.otf out.woff
+fontconv --name alarm,box in.otf out.woff
 fontconv --name-file names.lst in.otf out.woff
 fontconv --ligature home,menu --remove-ligatures in.otf out.woff
 fontconv --ligature-file ligatures.lst in.otf out.woff
