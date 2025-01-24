@@ -149,7 +149,12 @@ Deno.test("Ligature check", async () => {
   assertEquals(values2.length, 0);
 
   const char = String.fromCodePoint(Number(options1.code));
-  const path1 = font1.charToGlyph(char).path.toPathData();
-  const path2 = font2.charToGlyph(char).path.toPathData();
+  const glyph1 = font1.charToGlyph(char);
+  const glyph2 = font2.charToGlyph(char);
+  assertEquals(glyph1.name, "home");
+  assertEquals(glyph2.name, "");
+
+  const path1 = glyph1.path.toPathData();
+  const path2 = glyph2.path.toPathData();
   assertEquals(path1, path2);
 });
