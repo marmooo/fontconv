@@ -159,9 +159,7 @@ function createTemporaryFont(font, glyphs) {
   // avoid the warning caused by opentype.js below
   // Undefined CHARARRAY encountered and treated as an empty string.
   glyphs.forEach((glyph) => {
-    if (!glyph.name) {
-      glyph.name = String.fromCharCode(glyph.unicode);
-    }
+    if (!glyph.name) glyph.name = "";
   });
 
   const tmpFont = new Font({
