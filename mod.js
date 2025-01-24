@@ -214,6 +214,7 @@ function createLigaturesFont(font, glyphs) {
         .map((char) => charMap[char]);
       const by = ligatureGlyphs.length + i + 1;
       tmpFont.substitution.addLigature("liga", { sub, by });
+      glyph.name = ligature.name;
     }
   });
 
