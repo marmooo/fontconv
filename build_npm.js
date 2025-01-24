@@ -13,6 +13,7 @@ await build({
     },
   ],
   outDir: "./npm",
+  importMap: "deno.json",
   shims: {
     deno: true,
   },
