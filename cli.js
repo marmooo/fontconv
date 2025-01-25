@@ -1,4 +1,4 @@
-import { extname } from "https://deno.land/std/path/mod.ts";
+import { extname } from "@std/path";
 import { Command } from "commander";
 import { convert } from "./mod.js";
 

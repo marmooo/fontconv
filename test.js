@@ -1,5 +1,5 @@
 import * as fontconv from "./mod.js";
-import { assertEquals } from "https://deno.land/std/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 
 async function getName(uint8Array, code) {
   const font = await fontconv.getFont(uint8Array);

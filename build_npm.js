@@ -1,5 +1,5 @@
-import { copySync } from "https://deno.land/std/fs/mod.ts";
-import { build, emptyDir } from "https://deno.land/x/dnt/mod.ts";
+import { copySync } from "@std/fs";
+import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("./npm");
 
@@ -14,6 +14,9 @@ await build({
   ],
   outDir: "./npm",
   importMap: "deno.json",
+  compilerOptions: {
+    lib: ["ESNext"],
+  },
   shims: {
     deno: true,
   },
