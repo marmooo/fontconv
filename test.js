@@ -131,7 +131,7 @@ Deno.test("Name check", async () => {
   assertEquals(await getName(woff, code), name);
   assertEquals(await getName(woff2, code), name);
 });
-Deno.test("Ligature check", async () => {
+Deno.test("Ligature check (opentype.js)", async () => {
   const file = Deno.readFileSync("test/material-icons.woff2");
   const options1 = { code: "0xe88a" };
   const ttf1 = await fontconv.convert(file, ".ttf", options1);
@@ -157,4 +157,15 @@ Deno.test("Ligature check", async () => {
   const path1 = glyph1.path.toPathData();
   const path2 = glyph2.path.toPathData();
   assertEquals(path1, path2);
+});
+Deno.test("Ligature check (svg2ttf)", async () => {
+  const file = Deno.readFileSync("test/material-icons.woff2");
+  const options = { code: "0xe88a" };
+  const svg = await fontconv.convert(file, ".svg", options);
+  const ttf = await fontconv.convert(svg, ".ttf", options);
+  const font = await fontconv.getFont(ttf);
+  const ligatures = fontconv.getLigatureMap(font, "by");
+  const values = Object.values(ligatures);
+  assertEquals(values.length, 1);
+  assertEquals(values[0].name, "home");
 });
