@@ -1,5 +1,5 @@
 import * as fontconv from "./mod.js";
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertExists } from "@std/assert";
 
 async function getName(uint8Array, code) {
   const font = await fontconv.getFont(uint8Array);
@@ -168,4 +168,11 @@ Deno.test("Ligature check (svg2ttf)", async () => {
   const values = Object.values(ligatures);
   assertEquals(values.length, 1);
   assertEquals(values[0].name, "home");
+});
+Deno.test("Double Quote check", async () => {
+  const file = Deno.readFileSync("test/Roboto-Regular.ttf");
+  const options = { text: '"' };
+  const woff2 = await fontconv.convert(file, ".woff2", options);
+  const font = await fontconv.getFont(woff2);
+  assertExists(font.charToGlyph('"'));
 });
