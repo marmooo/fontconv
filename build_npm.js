@@ -22,7 +22,7 @@ await build({
   },
   package: {
     name: "fontconv",
-    version: "0.0.8",
+    version: "0.0.9",
     description:
       "Convert and compress fonts (.ttf, .otf, .eot, .svg, .woff, .woff2).",
     license: "MIT",
