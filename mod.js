@@ -1,7 +1,7 @@
 import { getLigatureMap } from "./ligature.js";
 import { compress, decompress } from "wawoff2";
 import { Font, parse } from "opentype.js";
-import { font2svgFont, ttf2svgFont, filterGlyphs } from "@marmooo/ttf2svg";
+import { filterGlyphs, font2svgFont, ttf2svgFont } from "@marmooo/ttf2svg";
 import svg2ttf from "svg2ttf";
 import ttf2eot from "ttf2eot";
 import ttf2woff from "ttf2woff";
@@ -193,6 +193,11 @@ function createFont(font, glyphs, options) {
 export async function convert(fontContent, format, options = {}) {
   const font = await getFont(fontContent);
   const glyphs = filterGlyphs(font, options);
+  if (glyphs.length < 1) {
+    throw new Error(
+      `No glyphs found for the given options: ${JSON.stringify(options)}`,
+    );
+  }
   const tempFont = createFont(font, glyphs, options);
   return await convertFormat(tempFont, format);
 }
