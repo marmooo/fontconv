@@ -1,6 +1,22 @@
 import * as fontconv from "./mod.js";
 import { assertEquals, assertExists } from "@std/assert";
 
+async function generateTestFile() {
+  const materialIcons = Deno.readFileSync("test/material-icons.woff2");
+  const svg = await fontconv.convert(materialIcons, ".svg", { code: "0xe88a" });
+  Deno.writeTextFileSync("test/format-check.svg", svg);
+  const ttf = await fontconv.convert(svg, ".ttf");
+  Deno.writeFileSync("test/format-check.ttf", ttf);
+  const otf = await fontconv.convert(svg, ".otf");
+  Deno.writeFileSync("test/format-check.otf", otf);
+  const eot = await fontconv.convert(svg, ".eot");
+  Deno.writeFileSync("test/format-check.eot", eot);
+  const woff = await fontconv.convert(svg, ".woff");
+  Deno.writeFileSync("test/format-check.woff", woff);
+  const woff2 = await fontconv.convert(svg, ".woff2");
+  Deno.writeFileSync("test/format-check.woff2", woff2);
+}
+
 async function getName(uint8Array, code) {
   const font = await fontconv.getFont(uint8Array);
   const glyphIndex = font.encoding.cmap.glyphIndexMap[Number(code)];
@@ -14,6 +30,8 @@ async function getLigature(uint8Array, code) {
   const ligatureMap = fontconv.getLigatureMap(font, "by");
   return ligatureMap[glyphIndex].name;
 }
+
+await generateTestFile();
 
 Deno.test("Format check", () => {
   const otf = Deno.readFileSync("test/format-check.otf");

@@ -1,25 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <!--
- 
- 
- 
- 
+Copyright 2018 Google, Inc. All Rights Reserved.
   -->
 
   <defs>
-    <font name="Material Icons Regular"
+    <font name="Material Icons"
       horiz-adv-x="512" vert-adv-y="512" >
     <font-face font-family="Material Icons" font-weight="400"
       font-stretch="normal"
       units-per-em="512"
       ascent="512"
       descent="0"/>
-<glyph glyph-name=".notdef" unicode="&#59530;"
+    <glyph  unicode="h"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M0 1Z"/>
+    <glyph  unicode="o"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M0 2Z"/>
+    <glyph  unicode="m"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M0 3Z"/>
+    <glyph  unicode="e"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M0 4Z"/>
+    <glyph glyph-name="home" unicode=""
       horiz-adv-x="512" vert-adv-y="512"
       d="M213 213L213 85L107 85L107 256L43 256L256 448L469 256L405 256L405 85L299 85L299 213L213 213Z"/>
-<missing-glyph glyph-name=".notdef"
+    <glyph glyph-name="home" unicode="home"
       horiz-adv-x="512" vert-adv-y="512"
       d="M213 213L213 85L107 85L107 256L43 256L256 448L469 256L405 256L405 85L299 85L299 213L213 213Z"/>
+    <missing-glyph glyph-name=".notdef"
+      horiz-adv-x="512" vert-adv-y="512"
+      d="M153 0L17 0L17 341L153 341L153 0ZM34 324L34 17L136 17L136 324L34 324Z"/>
     </font>
   </defs>
 </svg>
