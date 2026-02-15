@@ -1,7 +1,7 @@
 import { getLigatureMap } from "./ligature.js";
 import { compress, decompress } from "wawoff2";
 import { Font, parse } from "opentype.js";
-import { font2svgFont, ttf2svgFont } from "@marmooo/ttf2svg";
+import { font2svgFont, ttf2svgFont, filterGlyphs } from "@marmooo/ttf2svg";
 import svg2ttf from "svg2ttf";
 import ttf2eot from "ttf2eot";
 import ttf2woff from "ttf2woff";
@@ -111,45 +111,6 @@ export function getNameMap(font) {
     map[glyph.name] = glyph.index;
   }
   return map;
-}
-
-export function filterGlyphs(font, options) {
-  if (options.textFile) {
-    const text = Deno.readTextFileSync(options.textFile);
-    const glyphString = text.trimEnd().replace(/\n/g, "");
-    return font.stringToGlyphs(glyphString);
-  } else if (options.codeFile) {
-    const text = Deno.readTextFileSync(options.codeFile);
-    const glyphString = text.trimEnd().split("\n")
-      .map((line) => String.fromCodePoint(Number(line))).join("");
-    return font.stringToGlyphs(glyphString);
-  } else if (options.nameFile) {
-    const nameMap = getNameMap(font);
-    const text = Deno.readTextFileSync(options.nameFile);
-    return text.trimEnd().split("\n")
-      .map((line) => font.glyphs.get(nameMap[line]));
-  } else if (options.ligatureFile) {
-    const ligatureMap = getLigatureMap(font, "name");
-    const text = Deno.readTextFileSync(options.ligatureFile);
-    return text.trimEnd().split("\n")
-      .map((line) => font.glyphs.get(ligatureMap[line].by));
-  } else if (options.text) {
-    return font.stringToGlyphs(options.text);
-  } else if (options.code) {
-    const glyphString = options.code.split(",")
-      .map((code) => String.fromCodePoint(Number(code))).join("");
-    return font.stringToGlyphs(glyphString);
-  } else if (options.name) {
-    const nameMap = getNameMap(font);
-    return options.name.split(",")
-      .map((line) => font.glyphs.get(nameMap[line]));
-  } else if (options.ligature) {
-    const ligatureMap = getLigatureMap(font, "name");
-    return options.ligature.split(",")
-      .map((line) => font.glyphs.get(ligatureMap[line].by));
-  } else {
-    return Object.values(font.glyphs.glyphs);
-  }
 }
 
 function createTemporaryFont(font, glyphs) {
