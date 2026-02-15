@@ -8,7 +8,7 @@ program
   .description(
     "Convert and compress fonts (.ttf, .otf, .eot, .svg, .woff, .woff2).",
   )
-  .version("0.0.3");
+  .version("0.0.8");
 program
   .argument("<input>", "Path of input font file")
   .argument("<output>", "Path of output font file")
