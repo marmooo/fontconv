@@ -229,7 +229,7 @@ function createFont(font, glyphs, options) {
   }
 }
 
-export async function convert(fontContent, format, options) {
+export async function convert(fontContent, format, options = {}) {
   const font = await getFont(fontContent);
   const glyphs = filterGlyphs(font, options);
   const tempFont = createFont(font, glyphs, options);
