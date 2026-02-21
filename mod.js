@@ -83,23 +83,30 @@ export async function getFont(fontContent) {
 }
 
 async function convertFormat(font, format) {
-  const svg = font2svgFont(font);
-  if (format === ".svg") return svg;
-  const ttf = svg2ttf(svg).buffer;
+  if (format === ".svg") return font2svgFont(font);
+  const binary = new Uint8Array(font.toArrayBuffer());
+
+  // CFF (OTF) outlines cannot be stored in a .ttf file with correct magic bytes.
+  // Fall back to svg2ttf via SVG font as an intermediate to perform
+  // cubic-to-quadratic conversion (CFF -> glyf),
+  // producing a proper glyf-based TTF. All other formats accept CFF as-is since
+  // ttf2woff, ttf2eot, and wawoff2 do not inspect the outline type.
+  if (format === ".ttf" && isOTF(binary)) {
+    return svg2ttf(font2svgFont(font)).buffer;
+  }
   switch (format) {
-    case ".otf": {
-      const tempFont = parse(ttf.buffer);
-      return new Uint8Array(tempFont.toArrayBuffer());
-    }
+    case ".otf":
     case ".ttf":
-      return ttf;
+      // .otf: Returns glyf-based outlines if input is TTF. True CFF conversion
+      // (glyf -> CFF) is not supported in JavaScript yet. All modern environments
+      // accept glyf outlines in an .otf container.
+      return binary;
     case ".eot":
-      return ttf2eot(ttf);
+      return ttf2eot(binary);
     case ".woff":
-      return ttf2woff(ttf);
+      return ttf2woff(binary);
     case ".woff2":
-      // return ttf2woff2(ttf);
-      return await compress(ttf);
+      return await compress(binary);
     default:
       throw new Error(`${format} is not a supported format.`);
   }
