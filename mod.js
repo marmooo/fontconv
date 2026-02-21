@@ -76,7 +76,7 @@ export async function getFont(fontContent) {
   } else if (isEOT(fontContent)) {
     // const ttf = eot2ttf(fontContent);
     // return parse(ttf.buffer);
-    throw new Error(".eot format input is no supported.");
+    throw new Error(".eot format input is not supported.");
   } else {
     return parse(fontContent.buffer);
   }
